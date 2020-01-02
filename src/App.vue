@@ -1,28 +1,23 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+  <div id="app" class="container">
+    <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+      <p class="lead">
+        Find the best offer to sell your bitcoins for Venezuelan Bolívar (VES)
+        in
+        <a href="https://localbitcoins.com/" target="_blank">Localbitcoins</a>.
+      </p>
+    </div>
+    <AdList />
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import AdList from "./components/AdList.vue";
 
 export default {
   name: "app",
   components: {
-    HelloWorld
+    AdList
   }
 };
 </script>
-
-<style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
