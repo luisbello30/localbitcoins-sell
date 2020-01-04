@@ -129,7 +129,9 @@ export default {
   },
   mounted() {
     axios
-      .get("https://localbitcoins.com/sell-bitcoins-online/ves/.json")
+      .get(
+        "https://cors-anywhere.herokuapp.com/https://localbitcoins.com/sell-bitcoins-online/ves/.json"
+      )
       .then(response => {
         console.log(response);
         this.ad_list_raw = response.data.data.ad_list.sort(compareAds);
@@ -137,7 +139,7 @@ export default {
         this.loading = false;
       })
       .catch(error => {
-        console.log(error);
+        console.error(error);
       });
   },
   methods: {

@@ -1,10 +1,16 @@
 # Localbitcoins mini dashboard app to sell BTC for VES
 
 ## TODO
-- [ ] Add BTC/USD rates
+- [ ] Add BTC/USD/VES rates
 - [ ] Get all the ads (pagination). Currently only requesting and showing 50 ads of the first page.
-- [ ] Fix CORS problem (meanwhile it requires this Chrome [extension](https://chrome.google.com/webstore/detail/cors-unblock/lfhmikememgdcahcdlaciloancbhjino) to work)
+- [X] Fix CORS problem (meanwhile it requires this [Chrome extension](https://chrome.google.com/webstore/detail/cors-unblock/lfhmikememgdcahcdlaciloancbhjino) to work)
 
+## Resources
+
+- [Localbitcoins API docs](https://localbitcoins.com/api-docs/)
+- [CORS Anywhere](https://github.com/Rob--W/cors-anywhere)
+
+---
 
 ## Project setup
 ```
