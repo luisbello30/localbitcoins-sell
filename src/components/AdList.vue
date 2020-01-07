@@ -147,12 +147,12 @@ export default {
       }
     },
     getAdsList: async function() {
-      console.time();
+      // console.time();
       this.ad_list_raw = await requestAdsList();
       this.cleanAds();
       this.ad_list = this.ad_list_raw.sort(compareAds);
       this.loading = false;
-      console.timeEnd();
+      // console.timeEnd();
     },
     searchAmount: function() {
       this.filterAds();
@@ -171,7 +171,7 @@ export default {
       this.filterAds();
     },
     cleanAds: function() {
-      console.info(`Total ads before cleaning ${this.ad_list_raw.length}`);
+      // console.info(`Total ads before cleaning ${this.ad_list_raw.length}`);
 
       this.ad_list_raw = this.ad_list_raw.filter(ad => {
         let ad_bank = ad.data.bank_name.toLowerCase();
@@ -182,7 +182,7 @@ export default {
         );
       });
 
-      console.info(`Total ads after cleaning ${this.ad_list_raw.length}`);
+      // console.info(`Total ads after cleaning ${this.ad_list_raw.length}`);
     }
   },
   computed: {
@@ -234,7 +234,7 @@ const requestAdsList = async () => {
   let keepGoing = true;
   let url = "https://localbitcoins.com/sell-bitcoins-online/ves/.json";
   while (keepGoing) {
-    console.log("Requesting", url);
+    // console.log("Requesting", url);
     let response = await requestPage(url);
     await records.push.apply(records, response.data.ad_list);
     url = await response.pagination.next;
@@ -248,7 +248,7 @@ const requestAdsList = async () => {
 const requestPage = async url => {
   const rproxy = "https://cors-anywhere.herokuapp.com/";
   let payload = await axios.get(rproxy + url).then(resp => resp.data);
-  console.log(payload);
+  // console.log(payload);
   return payload;
 };
 </script>
