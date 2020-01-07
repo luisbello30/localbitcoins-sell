@@ -1,6 +1,5 @@
 <template>
-  <div v-if="loading">Cargando...</div>
-  <div v-else>
+  <div>
     <div class="row align-items-end">
       <div class="col-md-3">
         <label for="selected_bank">Select a bank:</label>
@@ -44,21 +43,19 @@
           </div>
         </div>
       </div>
-      <div class="col-md-1">
+      <div class="col-md-3">
         <button
-          class="btn btn-outline-primary"
+          class="btn btn-outline-primary mr-2 mt-2"
           type="button"
-          @click="clearFilters"
+          @click="cleanFilters"
         >
           Clear
         </button>
-      </div>
-      <div class="col-md-1">
-        <button class="btn btn-outline-info" type="button">
+        <button class="btn btn-outline-info mr-2 mt-2" type="button" disabled>
           Refresh
         </button>
+        <span class="badge badge-pill badge-info">{{ adsCount }}</span>
       </div>
-      <div class="col-md-1 text-muted">{{ adsCount }} ads.</div>
     </div>
     <br />
     <table class="table table-striped table-responsive">
@@ -68,13 +65,18 @@
           <th scope="col">Bank</th>
           <!-- <th scope="col">USD Price</th> -->
           <th scope="col">VES Price</th>
-          <th scope="col">Min amount</th>
+          <th scope="col" style="min-width:120px">Min amount</th>
           <th scope="col">Max amount</th>
-          <th scope="col">Go to ad</th>
+          <th scope="col">Go to</th>
         </tr>
       </thead>
-      <tbody>
-        <tr v-for="ad in ad_list" :key="ad.data.ad_id">
+      <tbody v-if="loading">
+        <tr>
+          <td colspan="6" class="text-center">Cargando...</td>
+        </tr>
+      </tbody>
+      <tbody v-else>
+        <tr v-for="(ad, idx) in ad_list" :key="idx">
           <td>{{ ad.data.profile.name }}</td>
           <td>{{ ad.data.bank_name | strShorted }}</td>
           <!-- <td>{{ ad.data.temp_price_usd | toUSDCurrency }}</td> -->
@@ -102,11 +104,13 @@
 <script>
 import axios from "axios";
 
+const MINIMUM_AMOUNT_TO_SELL = 70000;
+
 export default {
   data() {
     return {
-      ad_list: null,
-      ad_list_raw: null,
+      ad_list: [],
+      ad_list_raw: [],
       amount: null,
       banks: [
         "Banesco",
@@ -115,7 +119,7 @@ export default {
         "BOD",
         "Banco de Venezuela"
       ],
-      exclude_term: [
+      exclude_terms: [
         "bitmain",
         "coupon",
         "cupon",
@@ -128,19 +132,7 @@ export default {
     };
   },
   mounted() {
-    axios
-      .get(
-        "https://cors-anywhere.herokuapp.com/https://localbitcoins.com/sell-bitcoins-online/ves/.json"
-      )
-      .then(response => {
-        console.log(response);
-        this.ad_list_raw = response.data.data.ad_list.sort(compareAds);
-        this.ad_list = this.ad_list_raw;
-        this.loading = false;
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    this.getAdsList();
   },
   methods: {
     filterAds: function() {
@@ -154,6 +146,14 @@ export default {
         });
       }
     },
+    getAdsList: async function() {
+      console.time();
+      this.ad_list_raw = await requestAdsList();
+      this.cleanAds();
+      this.ad_list = this.ad_list_raw.sort(compareAds);
+      this.loading = false;
+      console.timeEnd();
+    },
     searchAmount: function() {
       this.filterAds();
       if (this.amount) {
@@ -165,10 +165,24 @@ export default {
         });
       }
     },
-    clearFilters: function() {
+    cleanFilters: function() {
       this.selected_bank = "";
       this.amount = null;
       this.filterAds();
+    },
+    cleanAds: function() {
+      console.info(`Total ads before cleaning ${this.ad_list_raw.length}`);
+
+      this.ad_list_raw = this.ad_list_raw.filter(ad => {
+        let ad_bank = ad.data.bank_name.toLowerCase();
+        return (
+          // Remove ads with excluded terms and without enough funds
+          !this.exclude_terms.some(term => ad_bank.includes(term)) &&
+          parseFloat(ad.data.max_amount) > MINIMUM_AMOUNT_TO_SELL
+        );
+      });
+
+      console.info(`Total ads after cleaning ${this.ad_list_raw.length}`);
     }
   },
   computed: {
@@ -214,6 +228,29 @@ function compareAds(a, b) {
   if (a > b) return -1;
   return 0;
 }
+
+const requestAdsList = async () => {
+  let records = [];
+  let keepGoing = true;
+  let url = "https://localbitcoins.com/sell-bitcoins-online/ves/.json";
+  while (keepGoing) {
+    console.log("Requesting", url);
+    let response = await requestPage(url);
+    await records.push.apply(records, response.data.ad_list);
+    url = await response.pagination.next;
+    if (!url) {
+      keepGoing = false;
+      return records;
+    }
+  }
+};
+
+const requestPage = async url => {
+  const rproxy = "https://cors-anywhere.herokuapp.com/";
+  let payload = await axios.get(rproxy + url).then(resp => resp.data);
+  console.log(payload);
+  return payload;
+};
 </script>
 
 <style scoped>
