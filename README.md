@@ -7,6 +7,7 @@
 - [X] Fix CORS problem (meanwhile it requires this [Chrome extension](https://chrome.google.com/webstore/detail/cors-unblock/lfhmikememgdcahcdlaciloancbhjino) to work)
 - [X] Remove unwanted ads like those with too low amounts, no bank transfer like payment method (recargas), etc.
 - [ ] Refresh ads list with button
+- [ ] Add timed recommendation to refresh after 7 minutes
 
 ## Resources
 

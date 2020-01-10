@@ -7,6 +7,7 @@
           name="selected_bank"
           id="selected_bank"
           v-model="selected_bank"
+          :disabled="loading"
           class="form-control"
           aria-placeholder="Select a bank to filter"
           @change="filterAds"
@@ -29,6 +30,7 @@
             name="amount"
             id="amount"
             v-model="amount"
+            :disabled="loading"
             @keyup.enter="searchAmount"
             min="0"
           />
@@ -36,9 +38,10 @@
             <button
               class="btn btn-outline-secondary"
               type="button"
+              :disabled="loading"
               @click="searchAmount"
             >
-              Go!
+              Filter
             </button>
           </div>
         </div>
@@ -54,7 +57,11 @@
         <button class="btn btn-outline-info mr-2 mt-2" type="button" disabled>
           Refresh
         </button>
-        <span class="badge badge-pill badge-info">{{ adsCount }}</span>
+        <span
+          class="badge badge-pill badge-info align-text-top ml-3"
+          style="font-size:17px"
+          >{{ adsCount }}</span
+        >
       </div>
     </div>
     <br />
@@ -72,7 +79,7 @@
       </thead>
       <tbody v-if="loading">
         <tr>
-          <td colspan="6" class="text-center">Cargando...</td>
+          <td colspan="6" class="text-center">Loading...</td>
         </tr>
       </tbody>
       <tbody v-else>
@@ -147,12 +154,13 @@ export default {
       }
     },
     getAdsList: async function() {
-      console.time();
+      this.loading = true;
+      console.time("Time getting Ads list");
       this.ad_list_raw = await requestAdsList();
       this.cleanAds();
       this.ad_list = this.ad_list_raw.sort(compareAds);
+      console.timeEnd("Time getting Ads list");
       this.loading = false;
-      console.timeEnd();
     },
     searchAmount: function() {
       this.filterAds();
@@ -221,8 +229,8 @@ export default {
 };
 
 function compareAds(a, b) {
-  a = a.data.temp_price;
-  b = b.data.temp_price;
+  a = parseFloat(a.data.temp_price);
+  b = parseFloat(b.data.temp_price);
   // Inverse order: from highest to lowest
   if (a < b) return 1;
   if (a > b) return -1;
@@ -236,7 +244,7 @@ const requestAdsList = async () => {
   while (keepGoing) {
     console.log("Requesting", url);
     let response = await requestPage(url);
-    await records.push.apply(records, response.data.ad_list);
+    await records.push(...response.data.ad_list);
     url = await response.pagination.next;
     if (!url) {
       keepGoing = false;
