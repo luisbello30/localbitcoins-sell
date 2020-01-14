@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="row align-items-end">
-      <div class="col-md-3">
+      <div class="col-sm-5 col-md-3">
         <label for="selected_bank">Select a bank:</label>
         <select
           name="selected_bank"
@@ -18,8 +18,8 @@
           }}</option>
         </select>
       </div>
-      <div class="col-md-3">
-        <label for="amount">Search for amount:</label>
+      <div class="col-sm-6 col-md-3">
+        <label for="amount">Search for amount to sell:</label>
         <div class="input-group">
           <div class="input-group-prepend">
             <span class="input-group-text">Bs.</span>
@@ -31,7 +31,7 @@
             id="amount"
             v-model="amount"
             :disabled="loading"
-            @keyup.enter="searchAmount"
+            @keyup.enter="filterAds"
             min="0"
           />
           <div class="input-group-append">
@@ -39,14 +39,14 @@
               class="btn btn-outline-secondary"
               type="button"
               :disabled="loading"
-              @click="searchAmount"
+              @click="filterAds"
             >
               Filter
             </button>
           </div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-sm-auto col-md-auto">
         <button
           class="btn btn-outline-primary mr-2 mt-2"
           type="button"
@@ -152,6 +152,14 @@ export default {
           return ad_bank.includes(selected);
         });
       }
+      if (this.amount) {
+        this.ad_list = this.ad_list.filter(ad => {
+          return (
+            parseFloat(ad.data.min_amount) <= this.amount &&
+            this.amount <= parseFloat(ad.data.max_amount)
+          );
+        });
+      }
     },
     getAdsList: async function() {
       this.loading = true;
@@ -161,17 +169,6 @@ export default {
       this.ad_list = this.ad_list_raw.sort(compareAds);
       // console.timeEnd("Time getting Ads list");
       this.loading = false;
-    },
-    searchAmount: function() {
-      this.filterAds();
-      if (this.amount) {
-        this.ad_list = this.ad_list.filter(ad => {
-          return (
-            parseFloat(ad.data.min_amount) <= this.amount &&
-            this.amount <= parseFloat(ad.data.max_amount)
-          );
-        });
-      }
     },
     cleanFilters: function() {
       this.selected_bank = "";
@@ -222,8 +219,8 @@ export default {
     },
     strShorted: function(value) {
       if (!value) return "";
-      value = value.toString();
-      return value.substring(0, 25) + "...";
+      if (value.length <= 30) return value;
+      return value.substring(0, 30) + "...";
     }
   }
 };
