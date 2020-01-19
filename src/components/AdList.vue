@@ -54,7 +54,12 @@
         >
           Clear
         </button>
-        <button class="btn btn-outline-info mr-2 mt-2" type="button" disabled>
+        <button
+          class="btn btn-outline-info mr-2 mt-2"
+          type="button"
+          :disabled="loading"
+          @click="refresh"
+        >
           Refresh
         </button>
         <span
@@ -77,7 +82,7 @@
           <th scope="col">Go to</th>
         </tr>
       </thead>
-      <tbody v-if="loading">
+      <tbody v-if="ad_list.length === 0">
         <tr>
           <td colspan="6" class="text-center">Loading...</td>
         </tr>
@@ -188,6 +193,12 @@ export default {
       });
 
       console.info(`Total ads after cleaning ${this.ad_list_raw.length}`);
+    },
+    refresh: async function() {
+      if (!this.loading) {
+        await this.getAdsList();
+        this.cleanFilters();
+      }
     }
   },
   computed: {
@@ -269,7 +280,7 @@ const requestPage = async url => {
 }
 
 .column-bank {
-  min-width: 350px;
+  min-width: 370px;
 }
 
 .column-price {
