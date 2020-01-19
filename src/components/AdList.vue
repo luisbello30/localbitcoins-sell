@@ -54,7 +54,12 @@
         >
           Clear
         </button>
-        <button class="btn btn-outline-info mr-2 mt-2" type="button" disabled>
+        <button
+          class="btn btn-outline-info mr-2 mt-2"
+          type="button"
+          :disabled="loading"
+          @click="refresh"
+        >
           Refresh
         </button>
         <span
@@ -68,16 +73,16 @@
     <table class="table table-striped table-responsive">
       <thead>
         <tr>
-          <th scope="col">Buyer</th>
-          <th scope="col">Bank</th>
+          <th scope="col" class="column-buyer">Buyer</th>
+          <th scope="col" class="column-bank">Bank</th>
           <!-- <th scope="col">USD Price</th> -->
-          <th scope="col">VES Price</th>
-          <th scope="col" style="min-width:120px">Min amount</th>
-          <th scope="col">Max amount</th>
+          <th scope="col" class="column-price">VES Price</th>
+          <th scope="col" class="column-min">Min amount</th>
+          <th scope="col" class="column-max">Max amount</th>
           <th scope="col">Go to</th>
         </tr>
       </thead>
-      <tbody v-if="loading">
+      <tbody v-if="ad_list.length === 0">
         <tr>
           <td colspan="6" class="text-center">Loading...</td>
         </tr>
@@ -188,6 +193,12 @@ export default {
       });
 
       // console.info(`Total ads after cleaning ${this.ad_list_raw.length}`);
+    },
+    refresh: async function() {
+      if (!this.loading) {
+        await this.getAdsList();
+        this.cleanFilters();
+      }
     }
   },
   computed: {
@@ -258,9 +269,29 @@ const requestPage = async url => {
 };
 </script>
 
-<style scoped>
+<style>
 .cell-price {
   font-weight: bold;
   color: green;
+}
+
+.column-buyer {
+  min-width: 250px;
+}
+
+.column-bank {
+  min-width: 370px;
+}
+
+.column-price {
+  min-width: 135px;
+}
+
+.column-min {
+  min-width: 115px;
+}
+
+.column-max {
+  min-width: 120px;
 }
 </style>
