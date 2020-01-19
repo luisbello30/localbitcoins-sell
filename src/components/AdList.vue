@@ -68,12 +68,12 @@
     <table class="table table-striped table-responsive">
       <thead>
         <tr>
-          <th scope="col">Buyer</th>
-          <th scope="col">Bank</th>
+          <th scope="col" class="column-buyer">Buyer</th>
+          <th scope="col" class="column-bank">Bank</th>
           <!-- <th scope="col">USD Price</th> -->
-          <th scope="col">VES Price</th>
-          <th scope="col" style="min-width:120px">Min amount</th>
-          <th scope="col">Max amount</th>
+          <th scope="col" class="column-price">VES Price</th>
+          <th scope="col" class="column-min">Min amount</th>
+          <th scope="col" class="column-max">Max amount</th>
           <th scope="col">Go to</th>
         </tr>
       </thead>
@@ -258,9 +258,29 @@ const requestPage = async url => {
 };
 </script>
 
-<style scoped>
+<style>
 .cell-price {
   font-weight: bold;
   color: green;
+}
+
+.column-buyer {
+  min-width: 250px;
+}
+
+.column-bank {
+  min-width: 350px;
+}
+
+.column-price {
+  min-width: 135px;
+}
+
+.column-min {
+  min-width: 115px;
+}
+
+.column-max {
+  min-width: 120px;
 }
 </style>
