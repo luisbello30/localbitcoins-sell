@@ -68,9 +68,13 @@
           >{{ adsCount }}</span
         >
       </div>
+      <Spinner v-if="loading" />
     </div>
     <br />
-    <table class="table table-striped table-responsive">
+    <table
+      class="table table-striped table-responsive"
+      :class="{ 'table-secondary': loading }"
+    >
       <thead>
         <tr>
           <th scope="col" class="column-buyer">Buyer</th>
@@ -115,10 +119,14 @@
 
 <script>
 import axios from "axios";
+import Spinner from "./Spinner.vue";
 
 const MINIMUM_AMOUNT_TO_SELL = 70000;
 
 export default {
+  components: {
+    Spinner
+  },
   data() {
     return {
       ad_list: [],
@@ -270,6 +278,10 @@ const requestPage = async url => {
 </script>
 
 <style>
+button:disabled {
+  cursor: not-allowed;
+}
+
 .cell-price {
   font-weight: bold;
   color: green;
