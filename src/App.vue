@@ -10,7 +10,7 @@
           >.
         </p>
       </div>
-      <AdList />
+      <AdsList />
       <p class="text-center">
         Favicon made by
         <a href="https://www.flaticon.com/authors/freepik" title="Freepik"
@@ -22,18 +22,21 @@
         >
       </p>
     </div>
+    <ScrollToTopBtn />
   </div>
 </template>
 
 <script>
-import AdList from "./components/AdList.vue";
+import AdsList from "./components/AdsList.vue";
 import NavBar from "./components/NavBar.vue";
+import ScrollToTopBtn from "./components/ScrollToTopBtn.vue";
 
 export default {
   name: "app",
   components: {
-    AdList,
-    NavBar
+    AdsList,
+    NavBar,
+    ScrollToTopBtn
   }
 };
 </script>
