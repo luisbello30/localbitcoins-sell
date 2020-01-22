@@ -33,7 +33,6 @@ export default {
     axios
       .get(rproxy + "https://www.bitven.com/assets/js/rates.js")
       .then(resp => {
-        console.info("Bitven's data:", resp.data);
         this.dolartoday = parseFloat(resp.data.USD_TO_BSF_RATE).toFixed(2);
         this.btc_price = parseFloat(resp.data.BTC_TO_USD_RATE).toFixed(2);
       });
