@@ -145,7 +145,10 @@ export default {
         "cupon",
         "cupón",
         "recarga",
-        "directv"
+        "directv",
+        "estafa",
+        "petro",
+        "ptr"
       ],
       loading: true,
       selected_bank: ""
