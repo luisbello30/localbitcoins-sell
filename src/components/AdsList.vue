@@ -147,7 +147,8 @@ export default {
         "recarga",
         "directv",
         "estafa",
-        "petro"
+        "petro",
+        "ptr"
       ],
       loading: true,
       selected_bank: ""
