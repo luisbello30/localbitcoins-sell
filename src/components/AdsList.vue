@@ -148,7 +148,8 @@ export default {
         "directv",
         "estafa",
         "petro",
-        "ptr"
+        "ptr",
+        "publipaid"
       ],
       loading: true,
       selected_bank: ""
