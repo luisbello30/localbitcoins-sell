@@ -4,8 +4,8 @@
     <div class="container">
       <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
         <p class="lead">
-          Find the best offer to sell your bitcoins for Venezuelan Bolívar (VES)
-          in
+          Find the best offer to sell your bitcoins for Venezuelan Bolívares
+          (VES) in
           <a href="https://localbitcoins.com/" target="_blank">Localbitcoins</a
           >.
         </p>

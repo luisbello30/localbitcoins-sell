@@ -2,6 +2,8 @@
 
 Sort all bitcoin selling ads in Venezuelan Bolívar (VES) posted on [Localbitcoins](https://localbitcoins.com/) from highest to lowest offer, filter by Bank and desired amount to sell.
 
+Built with Vue.js, Bootstrap, Axios, CORS Anywhere proxy and :coffee:.
+
 ## TODO
 - [X] Add BTC/USD/VES rates
 - [ ] Add **Others** in banks options
