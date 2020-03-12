@@ -149,7 +149,8 @@ export default {
         "estafa",
         "petro",
         "ptr",
-        "publipaid"
+        "publipaid",
+        "blizzard"
       ],
       loading: true,
       selected_bank: ""
