@@ -8,6 +8,7 @@
 </head>
 <body>
     <p id="message"></p>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
         const $message = document.querySelector('#message')
         function renderMessage(msg) {
@@ -15,42 +16,45 @@
         }
         // renderMessage('Probando la función renderMessage')
 
-
         let adList = []
 
         const go = async () => {
+            console.time("go")
             adList = await getAdsList()
-            adList.map(ad => ad.data.bank_name).sort().join('\n')
             renderMessage(`Total length of ads is ${adList.length}`)
             console.log(adList)
-        }
-
-        const getAdsList = async () => {
-            let records = []
-            let keepGoing = true
-            let url = "https://localbitcoins.com/sell-bitcoins-online/ves/.json"
-            while (keepGoing) {
-                console.log("url:", url)
-                let response = await requestPage(url)
-                await records.push.apply(records, response.data.ad_list)
-                url = await response.pagination.next
-                if (!url) {
-                    keepGoing = false;
-                    return records;
-                }
-            }
+            console.timeEnd("go")
         }
 
         const requestPage = async(url) => {
             const proxy = "https://cors-anywhere.herokuapp.com/";
-            let payload = await fetch(proxy + url).then(resp => resp.json())
-            // console.log(payload)
-            return payload
+            return axios.get(proxy + url)
+        }
+
+        const getAdsList = async() => {
+            console.time("lbc")
+
+            let url = "https://localbitcoins.com/sell-bitcoins-online/ves/.json"
+            let urls = [requestPage(url)]
+            let records = []
+
+            for (let page = 2; page <= 10; page++) {
+                urls[page-1] = requestPage(url + "?page=" + page)
+            }
+            // console.log(urls)
+            await axios.all(urls).then(axios.spread( (...responses) => {
+                console.timeEnd("lbc")
+                // console.log("responses:", responses)
+
+                responses.forEach(resp => {
+                    records.push.apply(records, resp.data.data.ad_list)
+                });
+            }))
+            return records
         }
 
         go()
-
-
+        // getAdsList()
 
 
         // const requestPage = function (url) {

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <p id="message"></p>
+    <script>
+        const $message = document.querySelector('#message')
+        function renderMessage(msg) {
+            $message.textContent = msg
+        }
+        // renderMessage('Probando la función renderMessage')
+
+
+        let adList = []
+
+        const go = async () => {
+            console.time("go")
+            adList = await getAdsList()
+            // adList.map(ad => ad.data.bank_name).sort().join('\n')
+            renderMessage(`Total length of ads is ${adList.length}`)
+            console.log(adList)
+            console.timeEnd("go")
+        }
+
+        const getAdsList = async () => {
+            let records = []
+            let keepGoing = true
+            let url = "https://localbitcoins.com/sell-bitcoins-online/ves/.json"
+            for (let i = 0; i < 5; i++) {
+                console.log("url:", url)
+                let response = await requestPage(url)
+                await records.push.apply(records, response.data.ad_list)
+                url = await response.pagination.next
+                // if (!url) {
+                //     keepGoing = false;
+                //     return records;
+                // }
+            }
+            return records;
+        }
+
+        const requestPage = async(url) => {
+            const proxy = "https://cors-anywhere.herokuapp.com/";
+            let payload = await fetch(proxy + url).then(resp => resp.json())
+            // console.log(payload)
+            return payload
+        }
+
+        go()
+
+
+
+
+        // const requestPage = function (url) {
+        //     const proxy = "https://cors-anywhere.herokuapp.com/";
+        //     return new Promise((resolve, reject) => {
+        //         fetch(proxy + url)
+        //         .then(response => {
+        //             resolve(response);
+        //         })
+        //         .catch(error => {
+        //             console.error(error);
+        //             reject(error);
+        //         });
+        //     });
+        // }
+
+        // let url = "https://localbitcoins.com/sell-bitcoins-online/ves/.json";
+        // var i = 1
+        // requestPage(url)
+        //     .then(response => response.json())
+        //     .then(response => {
+        //         console.log("request "+i, response); i++;
+        //         let msg = response.data.ad_list.map(ad => ad.data.bank_name)
+        //             .sort().join('\n')
+        //         renderMessage(msg)
+        //         console.log("next link:", response.pagination.next)
+        //     })
+        //     .catch(e => console.error(e));
+    </script>
+</body>
+</html>
