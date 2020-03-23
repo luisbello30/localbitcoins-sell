@@ -28,28 +28,33 @@
 
         const requestPage = async(url) => {
             const proxy = "https://cors-anywhere.herokuapp.com/";
-            return axios.get(proxy + url)
+            return axios.get(proxy + url).catch( err => {
+                console.log("Uguuu... error", err)
+            })
         }
 
         const getAdsList = async() => {
             console.time("lbc")
 
             let url = "https://localbitcoins.com/sell-bitcoins-online/ves/.json"
-            let urls = [requestPage(url)]
+            let urls = []
             let records = []
 
-            for (let page = 2; page <= 10; page++) {
+            for (let page = 1; page <= 10; page++) {
                 urls[page-1] = requestPage(url + "?page=" + page)
             }
             // console.log(urls)
-            await axios.all(urls).then(axios.spread( (...responses) => {
+            await Promise.all(urls).then(responseArr => {
                 console.timeEnd("lbc")
-                // console.log("responses:", responses)
+                // console.log("responseArr:", responseArr)
 
-                responses.forEach(resp => {
-                    records.push.apply(records, resp.data.data.ad_list)
+                responseArr.forEach(resp => {
+                    console.log(resp)
+                    if (resp && resp.data) {
+                        records.push.apply(records, resp.data.data.ad_list)
+                    }
                 });
-            }))
+            })
             return records
         }
 

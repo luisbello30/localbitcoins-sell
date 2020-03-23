@@ -31,17 +31,16 @@
             let records = []
             let keepGoing = true
             let url = "https://localbitcoins.com/sell-bitcoins-online/ves/.json"
-            for (let i = 0; i < 5; i++) {
+            while (keepGoing) {
                 console.log("url:", url)
                 let response = await requestPage(url)
                 await records.push.apply(records, response.data.ad_list)
                 url = await response.pagination.next
-                // if (!url) {
-                //     keepGoing = false;
-                //     return records;
-                // }
+                if (!url) {
+                    keepGoing = false;
+                    return records;
+                }
             }
-            return records;
         }
 
         const requestPage = async(url) => {
