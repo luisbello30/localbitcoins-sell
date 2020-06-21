@@ -1,22 +1,21 @@
 <template>
   <div>
     <div class="row align-items-end">
-      <div class="col-sm-5 col-md-3">
+      <div class="col-sm-7 col-md-5">
         <label for="selected_bank">Select a bank:</label>
-        <select
-          name="selected_bank"
-          id="selected_bank"
+        <multiselect
           v-model="selected_bank"
+          tag-placeholder="Add this as new bank"
+          placeholder="Search or add a bank"
           :disabled="loading"
-          class="form-control"
-          aria-placeholder="Select a bank to filter"
-          @change="filterAds"
-        >
-          <option value="" selected>All</option>
-          <option v-for="(bank, index) in banks" :value="bank" :key="index">{{
-            bank
-          }}</option>
-        </select>
+          label="name"
+          track-by="code"
+          :options="banks"
+          :multiple="true"
+          :taggable="true"
+          @input="filterAds"
+          @tag="addTag"
+        ></multiselect>
       </div>
       <div class="col-sm-6 col-md-3">
         <label for="amount">Search for amount to sell:</label>
@@ -120,12 +119,14 @@
 <script>
 import axios from "axios";
 import Spinner from "./Spinner.vue";
+import Multiselect from "vue-multiselect";
 
 const MINIMUM_AMOUNT_TO_SELL = 70000;
 
 export default {
   components: {
-    Spinner
+    Spinner,
+    Multiselect
   },
   data() {
     return {
@@ -133,11 +134,11 @@ export default {
       ad_list_raw: [],
       amount: null,
       banks: [
-        "Banesco",
-        "Mercantil",
-        "Provincial",
-        "BOD",
-        "Banco de Venezuela"
+        { name: "Banesco", code: "ba" },
+        { name: "Mercantil", code: "me" },
+        { name: "Provincial", code: "pr" },
+        { name: "BOD", code: "bo" },
+        { name: "Banco de Venezuela", code: "bv" }
       ],
       exclude_terms: [
         "bitmain",
@@ -153,7 +154,7 @@ export default {
         "blizzard"
       ],
       loading: true,
-      selected_bank: ""
+      selected_bank: []
     };
   },
   mounted() {
@@ -161,13 +162,13 @@ export default {
   },
   methods: {
     filterAds: function() {
-      if (this.selected_bank == "") {
+      if (this.selected_bank.length === 0) {
         this.ad_list = this.ad_list_raw;
       } else {
-        let selected = this.selected_bank.toLowerCase();
+        let selected = this.selected_bank.map(bank => bank.name.toLowerCase());
         this.ad_list = this.ad_list_raw.filter(ad => {
           let ad_bank = ad.data.bank_name.toLowerCase();
-          return ad_bank.includes(selected);
+          return selected.some(select => ad_bank.includes(select));
         });
       }
       if (this.amount) {
@@ -189,7 +190,7 @@ export default {
       this.loading = false;
     },
     cleanFilters: function() {
-      this.selected_bank = "";
+      this.selected_bank = [];
       this.amount = null;
       this.filterAds();
     },
@@ -212,6 +213,15 @@ export default {
         await this.getAdsList();
         this.cleanFilters();
       }
+    },
+    addTag(newTag) {
+      const tag = {
+        name: newTag,
+        code: newTag.substring(0, 2) + Math.floor(Math.random() * 10000000)
+      };
+      this.selected_bank.push(tag);
+      this.banks.push(tag);
+      this.filterAds();
     }
   },
   computed: {
@@ -282,6 +292,7 @@ const requestPage = async url => {
 };
 </script>
 
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style>
 button:disabled {
   cursor: not-allowed;
